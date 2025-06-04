@@ -1,5 +1,4 @@
-# Build stage
-FROM golang:1.24-alpine AS builder
+FROM golang:alpine AS builder
 
 WORKDIR /app
 
@@ -12,8 +11,8 @@ RUN go mod download
 # Copy source code
 COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/auto-dns .
+
+RUN CGO_ENABLED=0 go build -tags memoize_builders -o auto-dns /app/cmd/main.go
 
 # Final stage
 FROM alpine:latest
@@ -22,6 +21,7 @@ WORKDIR /app
 
 # Copy the binary from builder
 COPY --from=builder /app/auto-dns .
+COPY --from=builder --chown=1000:1000 /app/modsec /app/modsec
 
 # Run the application
-ENTRYPOINT ["/app/auto-dns"] 
+ENTRYPOINT ["/app/auto-dns"]
