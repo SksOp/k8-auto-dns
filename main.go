@@ -49,7 +49,7 @@ func (s *Server) proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create target URL
-	targetURL := fmt.Sprintf("http://%s.%s.svc.cluster.local:80", subdomain, os.Getenv("POD_NAMESPACE"))
+	targetURL := fmt.Sprintf("%s.%s.svc.cluster.local:80", subdomain, os.Getenv("POD_NAMESPACE"))
 	proxy := httputil.NewSingleHostReverseProxy(&url.URL{
 		Scheme: "http",
 		Host:   targetURL,
